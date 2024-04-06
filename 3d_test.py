@@ -120,19 +120,15 @@ def clean_csv(filename,lenght=0):
         values2 = row[2].strip('{}').split(',')
         values3 = row[3].strip('{}').split(',')
         df.loc[ID]=[np.array([[values1[0],values1[1],values1[2]],[values2[0],values2[1],values2[2]],[values3[0],values3[1],values3[2]]]).astype(float)]
-    orig_info = {}
+    
     p = len(df)
     UID_names = df.index
-    tris = []
-    for i in range(p):
-        reduced, info = reduce_dimensions(df.loc[UID_names[i]][0])
-        tris.append(reduced)
-        orig_info[UID_names[i]]= info
-    triangles = np.array(tris)
+    
+    triangles = df.to_numpy()
     if lenght:
         triangles=triangles[:lenght]
     
-    return triangles, orig_info
+    return triangles
 
 # TODO:
 # permutation loop should at least use relevant itertools helper function
