@@ -113,7 +113,6 @@ def clean_csv(filename,length=0):
     columns = {}
     df = pd.DataFrame(columns=[0])
     col = []
-    tris=[]
     # Iterate over each row in the DataFrame
     for index, row in data.iterrows():
         ID=row[0]
@@ -121,14 +120,14 @@ def clean_csv(filename,length=0):
         values2 = row[2].strip('{}').split(',')
         values3 = row[3].strip('{}').split(',')
         df.loc[ID]=[np.array([[values1[0],values1[1],values1[2]],[values2[0],values2[1],values2[2]],[values3[0],values3[1],values3[2]]]).astype(float)]
-        tris.append([[float(values1[0]),float(values1[1]),float(values1[2])],[float(values2[0]),float(values2[1]),float(values2[2])],[float(values3[0]),float(values3[1]),float(values3[2])]])
-    df=df.iloc[:10]
+    
     p = len(df)
     UID_names = df.index
     
-    triangles = np.array(tris)[:10]
-    print(triangles)
-    print('TYPE:',type(triangles),triangles.shape)
+    triangles = df.to_numpy()
+    if length:
+        triangles=triangles[:length]
+    
     return triangles
 
 # TODO:
@@ -138,12 +137,12 @@ def clean_csv(filename,length=0):
 #@jit
 
 def vectorized_test(A):
-    centroid_A = np.mean(A, axis=1)
+    centroid_A = np.mean(A, axis=0)
     centroid_B = np.mean(A, axis=1)
-    
-    AA = A - centroid_A[:, np.newaxis, :]
-    BB = A - centroid_B[:, np.newaxis, :]
-    print('Calcs:',A,centroid_B.shape,centroid_A[0].shape,BB.shape)
+    print('Cent:',centroid_A[0].shape)
+    AA = A - centroid_A[:]
+    BB = A - centroid_B[:, np.newaxis]
+    print('Calcs:',AA)
     Rots=np.empty((len(A)**2,3,3))
     trans=np.empty((len(A)**2,1,3))
     m = AA[0].shape[1]
@@ -361,7 +360,7 @@ def main():
     rotations, translations = vectorized_test(triangle_list)
     rotated_tris = rotate_triangles(rotations, translations, triangle_list)
     distance_matrix = distance_matrix_calc(rotated_tris, triangle_list)
-    print("Done",distance_matrix)
+    print("Done")
 
 
 if __name__ == "__main__":

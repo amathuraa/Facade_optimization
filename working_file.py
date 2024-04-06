@@ -102,6 +102,7 @@ def reduce_dimensions(source_points):
     
     source_rotated = [[row[0], row[1]] for row in rotated_triangle_flat]
     rot_matrix_combined = np.dot(xy_matrix,rotation_matrix)
+    #print(type(source_rotated))
     return source_rotated, [translation, rot_matrix_combined]
 
 
@@ -131,7 +132,8 @@ def clean_csv(filename,lenght=0):
     triangles = np.array(tris)
     if lenght:
         triangles=triangles[:lenght]
-    
+    print(triangles)
+    print('TYPE:',type(triangles),triangles.shape)
     return triangles, orig_info
 
 # TODO:
@@ -141,12 +143,13 @@ def clean_csv(filename,lenght=0):
 #@jit
 
 def vectorized_test(A):
+    print(A.shape,A[0].shape)
     centroid_A = np.mean(A, axis=1)
     centroid_B = np.mean(A, axis=1)
     
     AA = A - centroid_A[:, np.newaxis, :]
     BB = A - centroid_B[:, np.newaxis, :]
-    print('Calcs:',A,centroid_B,BB)
+    print('Calcs:',A,centroid_B.shape,centroid_A[0].shape,BB.shape)
     Rots=np.empty((len(A)**2,2,2))
     trans=np.empty((len(A)**2,1,2))
     m = AA[0].shape[1]
